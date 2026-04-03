@@ -2,8 +2,6 @@
 
 A real-time ride-hailing app built with Next.js, Tailwind CSS, and Appwrite. Uses **geo queries** to match riders with nearby drivers and **realtime subscriptions** for live ride tracking.
 
-![Rider dashboard](https://raw.githubusercontent.com/appwrite-community/uber-clone-nextjs/main/preview.png)
-
 ## Features
 
 - Rider and driver roles with separate dashboards
