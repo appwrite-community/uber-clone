@@ -53,6 +53,14 @@ export async function createRideAction(
 export async function acceptRideAction(rideId: string, driverId: string) {
   const tablesDB = getAdminClient();
 
+  // Read the ride to get the riderId for scoped permissions
+  const current = await tablesDB.getRow({
+    databaseId: DATABASE_ID,
+    tableId: RIDES_TABLE_ID,
+    rowId: rideId,
+  });
+  const riderId = current.riderId as string;
+
   // Use a transaction to prevent two drivers accepting the same ride
   const tx = await tablesDB.createTransaction();
 
@@ -64,10 +72,9 @@ export async function acceptRideAction(rideId: string, driverId: string) {
       rowId: rideId,
       data: { driverId, status: 'accepted' },
       permissions: [
-        Permission.read(Role.user(driverId)),
-        Permission.update(Role.user(driverId)),
         Permission.read(Role.users()),
-        Permission.update(Role.users()),
+        Permission.update(Role.user(riderId)),
+        Permission.update(Role.user(driverId)),
       ],
       transactionId: tx.$id,
     });
