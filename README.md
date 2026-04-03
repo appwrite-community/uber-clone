@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Uber Clone with Appwrite
 
-## Getting Started
+A real-time ride-hailing app built with Next.js, Tailwind CSS, and Appwrite. Uses **geo queries** to match riders with nearby drivers and **realtime subscriptions** for live ride tracking.
 
-First, run the development server:
+![Rider dashboard](https://raw.githubusercontent.com/appwrite-community/uber-clone-nextjs/main/preview.png)
+
+## Features
+
+- Rider and driver roles with separate dashboards
+- Geo queries with spatial indexes to find nearby rides within 5km
+- Realtime subscriptions for live location tracking during rides
+- OTP verification at pickup
+- Dev mode to mock GPS locations for testing
+- Dark mode UI with Leaflet + OpenStreetMap
+
+## Tech stack
+
+- [Next.js](https://nextjs.org) (App Router)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Appwrite](https://appwrite.io) (Auth, Databases, Realtime)
+- [Leaflet](https://leafletjs.com) + [OpenStreetMap](https://www.openstreetmap.org)
+
+## Setup
+
+### 1. Clone and install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/appwrite-community/uber-clone-nextjs.git
+cd uber-clone-nextjs
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Appwrite project
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create an Appwrite project and set up the database with three tables:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **profiles** - userId (varchar), name (varchar), role (enum)
+- **driver-locations** - driverId (varchar), location (point), available (boolean)
+- **rides** - riderId, driverId (varchar), pickupLocation, dropLocation (point), pickupAddress, dropAddress (varchar), status (enum), otp (varchar), driverLocation, riderLocation (point)
 
-## Learn More
+Add spatial indexes on `driver-locations.location` and `rides.pickupLocation`.
 
-To learn more about Next.js, take a look at the following resources:
+Enable row security on all tables.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Environment variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Copy `.env.local.example` to `.env.local` and fill in your values:
 
-## Deploy on Vercel
+```bash
+NEXT_PUBLIC_APPWRITE_ENDPOINT=https://fra.cloud.appwrite.io/v1
+NEXT_PUBLIC_APPWRITE_PROJECT_ID=your_project_id
+APPWRITE_API_KEY=your_api_key
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 4. Run
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Tutorial
+
+This project accompanies the tutorial [Build an Uber clone with geo queries and realtime](https://appwrite.io/blog/post/uber-clone-nextjs-appwrite) on the Appwrite blog.
+
+## License
+
+MIT
